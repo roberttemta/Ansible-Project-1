@@ -49,18 +49,21 @@ module "ec2_instance" {
 
   name = each.value.name
 
-  ami                    = each.value.ami != "" ? (each.value.ami == "debian" ? data.aws_ami.debian.id : each.value.ami == "ubuntu"   ? data.aws_ami.ubuntu.id : data.aws_ami.amazon-2.id) : data.aws_ami.amazon-2.id
-  instance_type          = each.value.instance_type
-  key_name               = aws_key_pair.ec2_key.key_name
+  ami           = each.value.ami != "" ? (each.value.ami == "amazon-2" ? data.aws_ami.amazon-2.id : each.value.ami == "ubuntu" ? data.aws_ami.ubuntu.id : data.aws_ami.amazon-2.id) : data.aws_ami.amazon-2.id
+  
+  instance_type = each.value.instance_type
+  key_name      = aws_key_pair.ec2_key.key_name
   #monitoring             = true
   user_data              = each.value.user_data != "" ? file("${path.module}/${each.value.user_data}") : ""
   vpc_security_group_ids = ["${aws_security_group.web-sg.id}"]
 
+/*ami           = each.value.ami != "" ? (each.value.ami == "debian" ? data.aws_ami.debian.id : each.value.ami == "ubuntu" ? data.aws_ami.ubuntu.id : data.aws_ami.amazon-2.id) : data.aws_ami.amazon-2.id*/
   tags = {
     Terraform   = "true"
     Environment = "${each.key}"
   }
 }
+
 # here we are using the Null resource to copy our ssh key into the master server.
 resource "null_resource" "copy_ssh_key" {
   depends_on = [module.ec2_instance["master"]]
