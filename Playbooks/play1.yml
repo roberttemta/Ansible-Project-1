@@ -17,6 +17,13 @@
         state: present
         update_cache: yes
       when: ansible_os_family=="RedHat"
+    
+    - name: Start httpd Daemon
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_os_family=="RedHat"
      
 
     - name: Create user
