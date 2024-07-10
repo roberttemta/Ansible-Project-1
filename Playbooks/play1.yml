@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks: 
+    - name: Install nginx
+      package: 
+        name: nginx
+        state: present
+      when: ansible_processor_nproc > 2
+
+    - name: Create user
+      user:
+        name: Eden
+        comment: "Eden TEMTA"
+        shell: /bin/bash
+
+    - name: Create group
+      group:
+        name: CloudTeam
+        state: present
+
+    - name: Create index file
+      file:
+        path: /var/www/html/index.html
+        state: touch
