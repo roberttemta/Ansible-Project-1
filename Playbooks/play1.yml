@@ -41,8 +41,13 @@
       file:
         path: /var/www/html/index.html
         state: touch
+        register: file_output
+      
+    - name: Read data
+      debug:
+        var: file_output.diff.before.path
 
     - name: Copy content to index
       copy: 
-        dest: /var/www/html/index.html
+        dest: file_output.diff.before.path
         content: '<h1>This is created using ansible</h1>'
